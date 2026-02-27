@@ -1,0 +1,24 @@
+% xargs, parallel, find, files
+
+# Run commands in parallel on files with safe null-delimited input (handles spaces/newlines)
+find <search_dir> -type f -name "<glob>" -print0 | xargs -0 -n 1 -P <jobs> sha256sum
+
+# Use replacement string with -I to run a custom command per file
+find <search_dir> -type f -name "<glob>" -print0 | xargs -0 -I {} -P <jobs> sh -c '<cmd> "{}"'
+
+# Batch-process files with fixed argument size and parallel workers
+find <search_dir> -type f -print0 | xargs -0 -n <batch_size> -P <jobs> <cmd>
+
+# Read arguments from a file and run parallel execution
+cat <list_file> | xargs -n 1 -P <jobs> -I {} sh -c '<cmd> "{}"'
+
+# Copy matched files to a target directory safely (complex filenames supported)
+find <search_dir> -type f -name "<glob>" -print0 | xargs -0 -I {} -P <jobs> cp "{}" <dest_dir>/
+
+$ search_dir: find . -maxdepth 3 -type d
+$ glob: printf "%s\n" "*.log" "*.txt" "*.csv" "*.json" "*.sh"
+$ jobs: printf "%s\n" 1 2 4 8 16
+$ batch_size: printf "%s\n" 5 10 20 50 100
+$ list_file: find . -maxdepth 3 -type f
+$ cmd: printf "%s\n" "stat" "file" "wc -l" "gzip -9" "sed -n '1,5p'"
+$ dest_dir: find . -maxdepth 3 -type d

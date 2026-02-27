@@ -1,0 +1,32 @@
+% awk, text-processing, analytics, csv
+
+# Extract specific column with custom field separator
+awk -F '<delimiter>' '{print $<col>}' <file>
+
+# Filter rows by regex on a specific column
+awk -F '<delimiter>' '$<col> ~ /<regex>/ {print}' <file>
+
+# Filter rows by numeric threshold on a specific column
+awk -F '<delimiter>' '$<col>+0 > <threshold> {print}' <file>
+
+# Sum a numeric column
+awk -F '<delimiter>' '{sum += $<col>} END {print sum}' <file>
+
+# Calculate average of a numeric column
+awk -F '<delimiter>' '{sum += $<col>; cnt++} END {if (cnt) print sum/cnt; else print 0}' <file>
+
+# Reformat output columns with a different output separator
+awk -F '<delimiter>' 'BEGIN{OFS="<out_delimiter>"} {print $<col1>, $<col2>, $<col3>}' <file>
+
+# Skip header and print selected rows by condition
+awk -F '<delimiter>' 'NR>1 && $<col> ~ /<regex>/ {print $0}' <file>
+
+$ file: find . -maxdepth 3 -type f | grep -E '\.(csv|tsv|log|txt)$'
+$ delimiter: printf "%s\n" "," "\\t" ":" "|" ";"
+$ out_delimiter: printf "%s\n" "," "\\t" "|" " "
+$ col: printf "%s\n" 1 2 3 4 5 6 7 8 9 10
+$ col1: printf "%s\n" 1 2 3 4 5
+$ col2: printf "%s\n" 2 3 4 5 6
+$ col3: printf "%s\n" 3 4 5 6 7
+$ regex: printf "%s\n" "ERROR" "WARN" "INFO" "^[0-9]+$" "^(us|eu|apac)$"
+$ threshold: printf "%s\n" 10 50 100 500 1000

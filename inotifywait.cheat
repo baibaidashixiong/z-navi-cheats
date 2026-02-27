@@ -1,0 +1,23 @@
+% inotifywait, monitoring, automation, filesystem
+
+# Recursively monitor directory for modify/create events with live output
+inotifywait -m -r -e modify,create --format '%w%f %e' <watch_dir>
+
+# Monitor only matching files (regex include) for create events
+inotifywait -m -r -e create --include '<include_regex>' --format '%w%f %e' <watch_dir>
+
+# Exclude noisy paths while monitoring modify/create recursively
+inotifywait -m -r -e modify,create --exclude '<exclude_regex>' --format '%w%f %e' <watch_dir>
+
+# Trigger a script automatically for each created/modified file
+inotifywait -m -r -e modify,create --format '%w%f' <watch_dir> | while read -r <event_file>; do <script> "<event_file>"; done
+
+# Wait for one event with timeout and run a follow-up command
+inotifywait -r -t <timeout_sec> -e modify,create <watch_dir> && <script> <watch_dir>
+
+$ watch_dir: find . -maxdepth 3 -type d
+$ include_regex: printf "%s\n" '.*\\.conf$' '.*\\.ya?ml$' '.*\\.json$' '.*\\.sh$'
+$ exclude_regex: printf "%s\n" '(^|/)\\.git/' '(^|/)node_modules/' '.*\\.swp$' '.*\\.tmp$'
+$ script: find . -maxdepth 3 -type f -perm -u+x
+$ timeout_sec: printf "%s\n" 5 10 30 60 300
+$ event_file: printf "%s\n" "/tmp/example.txt"

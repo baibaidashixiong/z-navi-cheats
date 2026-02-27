@@ -1,0 +1,29 @@
+% docker, containers, cleanup, logs, ops
+
+# Remove stopped containers, unused networks, dangling images, and optionally volumes
+docker system prune -f --volumes
+
+# Remove all unused images older than a duration (e.g. 24h, 168h)
+docker image prune -a -f --filter "until=<until>"
+
+# Remove stopped containers older than a duration
+docker container prune -f --filter "until=<until>"
+
+# Open an interactive shell inside a running container
+docker exec -it <container> <shell>
+
+# Stream logs in real time and filter by regex (errors, warnings, etc.)
+docker logs -f --tail <tail_lines> <container> 2>&1 | grep --line-buffered -E "<regex>"
+
+# Show live CPU/memory/network/disk usage for one container
+docker stats <container>
+
+# Show one-shot resource usage snapshot (no streaming)
+docker stats --no-stream <container>
+
+$ container: docker ps --format '{{.Names}}'
+$ container_all: docker ps -a --format '{{.Names}}'
+$ shell: printf "%s\n" /bin/bash /bin/sh sh bash
+$ tail_lines: printf "%s\n" 50 100 200 500 1000
+$ regex: printf "%s\n" 'error|ERROR' 'warn|WARN' 'timeout' 'exception'
+$ until: printf "%s\n" 24h 72h 168h 240h

@@ -1,0 +1,108 @@
+% git
+
+# Start a bisect session between a known bad commit and a known good commit
+git bisect start <bad_commit> <good_commit>
+
+# Mark current commit as bad and continue bisect
+git bisect bad
+
+# Mark current commit as good and continue bisect
+git bisect good
+
+# Run an automated test script during bisect to find the first bad commit
+git bisect run <test_cmd>
+
+# Reset and exit bisect session
+git bisect reset
+
+# Rebase current branch onto target branch
+git rebase <base_branch>
+
+# Interactively rebase last N commits to squash/reword/reorder
+git rebase -i HEAD~<n_commits>
+
+# Continue rebase after resolving conflicts
+git rebase --continue
+
+# Abort rebase and restore previous branch state
+git rebase --abort
+
+# Checkout an existing branch
+git checkout <branch>
+
+# Create and checkout a new branch from current HEAD
+git checkout -b <new_branch>
+
+# Checkout a file from another commit into working tree
+git checkout <commit> -- <file>
+
+# Switch to detached HEAD at a specific commit
+git checkout --detach <commit>
+
+# Show branch graph with decorations for rebase/bisect context
+git log --oneline --graph --decorate --all -n <log_n>
+
+# Add a new worktree for a branch at a separate path
+git worktree add <worktree_path> <branch>
+
+# Create a new branch and worktree in one command
+git worktree add -b <new_branch> <worktree_path> <base_branch>
+
+# List all registered worktrees with branch and HEAD info
+git worktree list
+
+# Remove a worktree path that is no longer needed
+git worktree remove <worktree_path>
+
+# Prune stale worktree metadata
+git worktree prune
+
+# Show blame for a file with line numbers and author info
+git blame <file>
+
+# Show blame for a line range in a file
+git blame -L <line_start>,<line_end> <file>
+
+# Follow moved/copied lines while blaming a file
+git blame -M -C <file>
+
+# Filter log by author and limit number of commits
+git log --author="<author>" --oneline -n <log_n>
+
+# Filter log by commit message pattern (regex)
+git log --grep="<message_regex>" --oneline -n <log_n>
+
+# Filter log by time range
+git log --since="<since>" --until="<until_date>" --oneline
+
+# Filter log by path to view history of a specific file/directory
+git log --oneline -- <pathspec>
+
+# Filter log by commit range
+git log --oneline <range_expr>
+
+# Show only merge commits or only non-merge commits
+git log --oneline --merges -n <log_n>
+
+# Show commits touching a path by a specific author in a time window
+git log --author="<author>" --since="<since>" --until="<until_date>" --oneline -- <pathspec>
+
+$ bad_commit: git log --oneline -n 50 | awk '{print $1}'
+$ good_commit: git log --oneline -n 50 | awk '{print $1}'
+$ commit: git log --oneline -n 100 | awk '{print $1}'
+$ base_branch: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes | sort -u
+$ branch: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes | sort -u
+$ new_branch: printf "%s\n" "feature/" "fix/" "hotfix/" "chore/"
+$ n_commits: printf "%s\n" 2 3 5 8 10 20
+$ file: git ls-files
+$ test_cmd: printf "%s\n" "make test" "pytest -q" "npm test -- --runInBand" "./scripts/test.sh"
+$ log_n: printf "%s\n" 20 50 100 200
+$ worktree_path: printf "%s\n" "../wt-feature" "../wt-hotfix" "../wt-release"
+$ line_start: printf "%s\n" 1 10 50 100
+$ line_end: printf "%s\n" 20 80 120 200
+$ author: git log --format='%an' | sort -u
+$ message_regex: printf "%s\n" "fix" "refactor" "feat" "hotfix" "breaking"
+$ since: printf "%s\n" "1 week ago" "2 weeks ago" "1 month ago" "2025-01-01"
+$ until_date: printf "%s\n" "now" "2025-12-31" "2026-01-31"
+$ pathspec: (git ls-files; find . -maxdepth 3 -type d)
+$ range_expr: printf "%s\n" "main..HEAD" "origin/main..HEAD" "HEAD~10..HEAD"

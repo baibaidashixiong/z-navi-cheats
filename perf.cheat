@@ -1,0 +1,34 @@
+% perf, linux, profiling, performance
+
+# Collect high-level CPU and scheduler statistics for a command
+perf stat -d -d -d -- <cmd>
+
+# Collect system-wide counters for a fixed interval
+perf stat -a -e <events> sleep <duration_sec>
+
+# Record profiling data for a command with call graph
+perf record -F <freq> -g -- <cmd>
+
+# Record system-wide profiling for a specific PID set
+perf record -a -g -p <pid_list> -- sleep <duration_sec>
+
+# Show interactive hotspot view from latest perf.data
+perf report
+
+# Show annotated assembly with source correlation for a target symbol
+perf annotate --symbol <symbol>
+
+# Live view of hottest functions system-wide
+perf top -F <freq> -e <event>
+
+# Capture tracepoint events and decode them
+perf record -e <trace_event> -a -- sleep <duration_sec> && perf script
+
+$ cmd: printf "%s\n" "make -j$(nproc)" "stress-ng --cpu 4 --timeout 20s" "./app" "pytest -q"
+$ duration_sec: printf "%s\n" 5 10 30 60 120
+$ freq: printf "%s\n" 49 99 199 399 999
+$ event: printf "%s\n" cycles instructions cache-misses branch-misses cpu-clock task-clock
+$ events: printf "%s\n" cycles,instructions,cache-misses cpu-clock,task-clock context-switches,cpu-migrations,page-faults
+$ pid_list: ps -eo pid,comm --sort=-%cpu | head -n 15 | awk 'NR>1{print $1}' | paste -sd,
+$ symbol: printf "%s\n" main malloc free memcpy __schedule schedule
+$ trace_event: printf "%s\n" sched:sched_switch sched:sched_wakeup syscalls:sys_enter_openat irq:irq_handler_entry
