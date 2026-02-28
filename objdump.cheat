@@ -1,0 +1,64 @@
+% objdump, elf, binary, reverse-engineering, linux
+
+# Show basic file header information (architecture, flags, entry point)
+objdump -f <elf_file>
+
+# Show ELF section headers and section layout
+objdump -h <elf_file>
+
+# Show private headers such as program headers and dynamic linker info
+objdump -p <elf_file>
+
+# Show all available ELF headers and tables in one pass
+objdump -x <elf_file>
+
+# Show static symbol table (functions, objects, and addresses)
+objdump -t <elf_file>
+
+# Show dynamic symbol table exported/imported by shared objects
+objdump -T <elf_file>
+
+# Show relocation entries from regular relocation sections
+objdump -r <elf_file>
+
+# Show dynamic relocation entries used at runtime
+objdump -R <elf_file>
+
+# Dump full contents of a specific section (hex + ASCII)
+objdump -s -j <section_name> <elf_file>
+
+# Disassemble executable sections with Intel syntax
+objdump -d -M intel <elf_file>
+
+# Disassemble all sections including non-executable ones
+objdump -D -M intel <elf_file>
+
+# Disassemble with source code interleaving (binary should contain debug info)
+objdump -S -M intel <elf_file>
+
+# Readable combo: disassemble + relocations + source interleaving
+objdump -drS -M intel <elf_file>
+
+# Readable combo with demangled C++ symbols and source interleaving
+objdump -dCS -M intel <elf_file>
+
+# Deep combo: disassemble all sections with relocation info
+objdump -D -r -M intel <elf_file>
+
+# Readable combo for a specific section (for example .text or .plt)
+objdump -dr -M intel -j <section_name> <elf_file>
+
+# Disassemble only one symbol/function
+objdump -d -M intel --disassemble=<symbol_name> <elf_file>
+
+# Disassemble a specific address range
+objdump -d -M intel --start-address=<start_addr> --stop-address=<stop_addr> <elf_file>
+
+# Show DWARF debug information (line table, DIEs, and CU metadata)
+objdump --dwarf=info --dwarf=decodedline <elf_file>
+
+$ elf_file: find . -maxdepth 5 -type f \( -name "*.elf" -o -name "*.so" -o -name "*.o" -o -name "*.a" -o -perm -111 \) | sort -u
+$ section_name: printf "%s\n" .text .rodata .data .bss .plt .got .got.plt .dynsym .dynstr .rela.dyn .rela.plt .eh_frame .comment
+$ symbol_name: printf "%s\n" main _start init fini __libc_start_main malloc free memcpy
+$ start_addr: printf "%s\n" 0x0 0x400000 0x401000 0x402000
+$ stop_addr: printf "%s\n" 0x100 0x401100 0x402000 0x403000
